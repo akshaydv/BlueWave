@@ -21,7 +21,6 @@ import com.distributedworkflowengine.jobscheduler.domain.*;
 
 @Configuration
 public class JsProducerConfig {
-	
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapServer;
 	

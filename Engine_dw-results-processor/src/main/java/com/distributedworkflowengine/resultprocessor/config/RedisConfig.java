@@ -2,7 +2,6 @@ package com.distributedworkflowengine.resultprocessor.config;
 
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -22,13 +21,11 @@ public class RedisConfig  extends CachingConfigurerSupport {
 private static final Logger log = Logger.getLogger(CacheConfig.class);
 
 //creating beans
-@Value("${spring.redis.bootstrap-servers}")
-private String redisserver;
 @Bean
 public JedisConnectionFactory redisConnectionFactory() {
   JedisConnectionFactory redisConnectionFactory = new JedisConnectionFactory();
  // redisConnectionFactory.setHostName("172.23.238.159");
-  redisConnectionFactory.setHostName(redisserver);
+  redisConnectionFactory.setHostName("${REDIS_URL}");
   redisConnectionFactory.setPort(6379);
   return redisConnectionFactory;
 }

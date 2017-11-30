@@ -1,8 +1,7 @@
 package com.distributepipeline.message;
 
+import java.util.UUID;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +48,6 @@ public class JobManagerProducer {
 	}
 	
 	@Autowired
-	ModelToSocket modelToSocket;
-	
-	@Autowired
 	WorkFlow workFlow;
 	
 	@Autowired
@@ -65,12 +61,11 @@ public class JobManagerProducer {
 	
     //method to send total no. of tasks
 	
-	public void sendNumberOfTasks(Integer noOfTasks,String jobID) {
-		String userName=jobManagerController.getUuid();
+    public void sendNumberOfTasks(Integer noOfTasks) {
+		String userName=jobManagerController.getUserName();
 		String string1=noOfTasks.toString();
-		userName=userName.concat(" ");
+		userName=userName.concat("-");
 		userName=userName.concat(string1);
-		
 		logger.info(userName);
 		kafkaTemplate1.send("socket-number", userName);
 	}
@@ -90,7 +85,7 @@ public class JobManagerProducer {
 
 	//method to send tasknames to socket
 	public void sendTaskName(ModelToSocket modelToSocket) {
-//		modelToSocket.setUserName(jobManagerController.getUserName());
+		modelToSocket.setUserName(jobManagerController.getUserName());
 		logger.info("taskname "+ modelToSocket.getTaskName());
 		logger.info("username "+ modelToSocket.getUserName());
 	    kafkaTemplateToSocket.send(topic2, modelToSocket);  
@@ -99,36 +94,24 @@ public class JobManagerProducer {
  
 	@Value("${kafka.topic.triggerengine}")
 	private String topic3;
-	
 	@Value("${kafka.topic.jobIdToSocket}")
 	private String topic4;
 	
 	//method to send workflow to engine
 	
 	public void triggerEngine(WorkFlow workFlow) {
-		
-		if(workFlow.getTasks()!=null)
-			sendNumberOfTasks(workFlow.getTasks().size(),jobManagerController.getUuid());
-			
-		for(String key:workFlow.getTasks().keySet()) {
-     		//modelToSocket.setUserName(jobIdDetails.getUserName());
-     		modelToSocket.setUserName(jobManagerController.getUuid());
-     		logger.info(modelToSocket.getUserName());
-			logger.info("usernameconsumer "+jobIdDetails.getUserName());
-			modelToSocket.setTaskName(key);
-			logger.info("tasknameconsumer "+key);
-			sendTaskName(modelToSocket);
-		}	
 
-		//setting the fields of trigger class
+		//generating a unique id for each workflow
+		UUID uuid = UUID.randomUUID();
+		this.jobId=uuid.toString();
+
 		trigger.setUserName(jobManagerController.getUserName());
-		trigger.setJobId(jobManagerController.getUuid());
-		logger.info(jobManagerController.getUuid());
+		trigger.setJobId(uuid.toString());
+		logger.info(uuid.toString());
 		trigger.setWorkflow(workFlow);
 		String toSocket=jobManagerController.getUserName() + " "+jobId;
 		
-		//setting the fields of jobIdDetails
-		jobIdDetails.setJobId(jobManagerController.getUuid());
+		jobIdDetails.setJobId(this.jobId);
 		jobIdDetails.setUserName(jobManagerController.getUserName());
 		jobIdDetails.setWorkFlowName(workFlow.getWorkFlowName());
 		jobIdToSocket(jobIdDetails);
@@ -176,5 +159,6 @@ public class JobManagerProducer {
 		 kafkaTemplate1.send(topic7,userName+"&"+workFlowName+"&"+time);	
 		 logger.info(userName+"&"+workFlowName+"&"+time);
 	}
-	
+		
+
 }

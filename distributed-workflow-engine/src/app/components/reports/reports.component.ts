@@ -96,8 +96,7 @@ export class GetReportComponent implements OnInit {
       this.jobIdnames = resData1;
       console.log("jobidnames", this.jobIdnames); 
       this.jobId = this.jobIdnames[0].jobId; 
-    }); 
-  // console.log("USER", localStorage.getItem("Email")); 
+    });  
   }
 
   getJobReports(jobId: String) {
