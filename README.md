@@ -14,7 +14,5 @@ The core engine where the tasks are executed according to the workflow.
 
 ##Persistence Manager
 Persistence Manager is used for creating and managing workflows
-
-##Tasks 1 & 2
-Two dummy tasks made for demonstration purposes
+ 
 
