@@ -1,4 +1,4 @@
-# BlueWave
+# Bluewave
 Bluewave is a distributed workflow engine which automates any given workflow by dividing it into a list of tasks. 
 
 # Technologies used:
